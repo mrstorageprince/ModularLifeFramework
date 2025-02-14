@@ -1,23 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { FactionMemberEntity } from './FactionMemberEntity';
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity()
+@Entity({ name: "factions" })
 export class FactionEntity {
     @PrimaryGeneratedColumn()
-    id!: number;
+    factionId: number;
 
     @Column()
-    name!: string;
+    name: string;
+
+    @Column()
+    description: string;
+
+    @Column()
+    treasuryId: string;
 
     @Column({ nullable: true })
-    description!: string;
+    coalitionId?: string;
 
-    @OneToMany(() => FactionMemberEntity, (member) => member.faction)
-    members!: FactionMemberEntity[];
-
-    @Column({ default: 'active' })
-    status!: string;
-
-    @Column()
-    createdAt!: Date;
+    @Column({ type: "timestamptz" })
+    createdAt: Date;
 }

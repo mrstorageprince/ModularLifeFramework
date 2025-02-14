@@ -1,20 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { FactionEntity } from './FactionEntity';
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity()
+@Entity({ name: "faction_members" })
 export class FactionMemberEntity {
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn("uuid")
+    memberId: string;
 
     @Column()
-    playerId!: string;
+    playerId: string;
 
     @Column()
-    playerName!: string;
+    factionId: number;
 
     @Column()
-    role!: string;
+    role: string;
 
-    @ManyToOne(() => FactionEntity, (faction) => faction.members)
-    faction!: FactionEntity;
+    @Column({ type: "timestamptz" })
+    joinedAt: Date;
 }

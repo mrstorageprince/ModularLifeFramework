@@ -1,27 +1,25 @@
-export enum FactionRole {
-    LEADER = 'leader',
-    MEMBER = 'member',
-    OFFICER = 'officer',
-}
-
-export enum FactionStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-    DISBANDED = 'disbanded',
+export interface Faction {
+    factionId: number;
+    name: string;
+    description: string;
+    treasuryId: string;
+    createdAt: Date;
+    coalitionId?: string; // Optional; only one coalition allowed
 }
 
 export interface FactionMember {
+    memberId: string;
     playerId: string;
-    playerName: string;
-    role: FactionRole;
+    factionId: number;
+    role: 'leader' | 'officer' | 'member';
     joinedAt: Date;
 }
 
-export interface Faction {
-    id: number;
+export interface Coalition {
+    coalitionId: string;
     name: string;
     description: string;
-    members: FactionMember[];
-    status: FactionStatus;
+    treasuryId: string;
+    factionIds: number[];
     createdAt: Date;
 }
