@@ -3,26 +3,48 @@ import { ConfigManager } from "./config/configManager";
 import configRoutes from "./routes/configRoutes";
 import playerRoutes from "./routes/playerRoutes";
 
-/**
- * Initialize the Express app
- */
 const app = express();
-app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(express.json());
+
+let server: any;
 
 /**
- * Load the server configuration before starting the app.
- * This ensures that settings like storage type and welcome message are applied correctly.
+ * Start the server and load config.
  */
-(async () => {
-    await ConfigManager.loadConfig();
-    console.log(`Server Config Loaded:`, ConfigManager.getConfig());
+const startServer = async () => {
+    if (server) return; // ✅ Prevent duplicate starts
 
-    const PORT = process.env.PORT || 3000;
+    try {
+        await ConfigManager.loadConfig();
+        console.log(`Server Config Loaded:`, ConfigManager.getConfig());
 
-    // Register routes
-    app.use("/api/config", configRoutes);
-    app.use("/api/players", playerRoutes);
+        const PORT = process.env.PORT || 3000;
+        app.use("/api/config", configRoutes);
+        app.use("/api/players", playerRoutes);
 
-    // Start the server
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})();
+        server = app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+        return server;
+    } catch (error) {
+        console.error("❌ Server failed to start:", error);
+        process.exit(1);
+    }
+};
+
+/**
+ * Stop the server (for Jest tests).
+ */
+const stopServer = async () => {
+    if (server) {
+        await new Promise((resolve) => server.close(resolve));
+        console.log("🛑 Server closed successfully.");
+        server = null;
+    }
+};
+
+// ✅ Start server only if not running tests
+if (process.env.NODE_ENV !== "test") {
+    startServer();
+}
+
+// ✅ Export for testing
+export { app, server, startServer, stopServer };
